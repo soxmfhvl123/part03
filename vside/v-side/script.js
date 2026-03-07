@@ -113,18 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
     analyser.smoothingTimeConstant = 0.5; // Faster reaction
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-    let layerDarkCanvas = document.createElement('canvas');
-    let layerLightCanvas = document.createElement('canvas');
-    let layerDarkCtx = layerDarkCanvas.getContext('2d');
-    let layerLightCtx = layerLightCanvas.getContext('2d');
-    let smoothBass = 0;
-    let smoothTreble = 0;
+    const NUM_LAYERS = 5;
+    let layers = [];
+    let smoothBands = new Array(NUM_LAYERS).fill(0);
     let imgObj = new Image();
     let animationId;
-    let mousePos = { x: -1, y: -1 };
+    let mousePos = { x: 0.5, y: 0.5 }; // Initialize to center to prevent top-left jumping
 
     window.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
+        if (rect.width === 0) return; // Prevent NaN when modal is hidden
         mousePos.x = (e.clientX - rect.left) / rect.width;
         mousePos.y = (e.clientY - rect.top) / rect.height;
     });
@@ -134,15 +132,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (audioCtx.state === 'suspended') audioCtx.resume();
     }, { once: true });
 
-    // Analyze image brightness and split into exact black & white structural layers
+    // Analyze image brightness and split into 5 layered segments by Luma
     function initLumaLayers() {
         const w = imgObj.width;
         const h = imgObj.height;
         
-        layerDarkCanvas.width = w;
-        layerDarkCanvas.height = h;
-        layerLightCanvas.width = w;
-        layerLightCanvas.height = h;
+        layers = [];
+        for (let i = 0; i < NUM_LAYERS; i++) {
+            const c = document.createElement('canvas');
+            c.width = w;
+            c.height = h;
+            layers.push({
+                canvas: c,
+                ctx: c.getContext('2d'),
+                imgData: c.getContext('2d').createImageData(w, h)
+            });
+        }
         
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = w;
@@ -153,42 +158,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const imgData = tctx.getImageData(0, 0, w, h);
         const data = imgData.data;
         
-        const darkData = layerDarkCtx.createImageData(w, h);
-        const lightData = layerLightCtx.createImageData(w, h);
-        
         for (let i = 0; i < data.length; i += 4) {
             const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
-            const luma = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            if (a === 0) continue;
             
-            if (luma < 0.5) {
-                // Dark pixel (Shadows, background)
-                darkData.data[i] = r; darkData.data[i+1] = g; darkData.data[i+2] = b; darkData.data[i+3] = a;
-            } else {
-                // Light pixel (Text, highlights)
-                lightData.data[i] = r; lightData.data[i+1] = g; lightData.data[i+2] = b; lightData.data[i+3] = a;
-            }
+            const luma = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            let idx = Math.floor(luma * NUM_LAYERS);
+            if (idx >= NUM_LAYERS) idx = NUM_LAYERS - 1;
+            
+            const lData = layers[idx].imgData.data;
+            lData[i] = r; lData[i+1] = g; lData[i+2] = b; lData[i+3] = a;
         }
         
-        layerDarkCtx.putImageData(darkData, 0, 0);
-        layerLightCtx.putImageData(lightData, 0, 0);
+        layers.forEach(l => l.ctx.putImageData(l.imgData, 0, 0));
     }
 
     function animate() {
         analyser.getByteFrequencyData(dataArray);
 
-        let low = 0; 
-        for (let i = 0; i < 8; i++) low += dataArray[i];
-        low /= 8;
-
-        let high = 0; 
-        for (let i = 20; i < 60; i++) high += dataArray[i];
-        high /= 40;
-
-        // Smooth Interpolation for "Visually Appealing" non-chaotic movement
-        const targetBass = low / 255;
-        const targetTreble = high / 255;
-        smoothBass += (targetBass - smoothBass) * 0.15;
-        smoothTreble += (targetTreble - smoothTreble) * 0.2;
+        // Calculate 5 frequency bands corresponding to layers
+        // Array size = 128 (fftSize = 256)
+        const bands = [0, 0, 0, 0, 0];
+        const ranges = [[0,4], [4,12], [12,24], [24,45], [45,80]]; 
+        
+        for(let j=0; j<NUM_LAYERS; j++) {
+            let sum = 0;
+            const [start, end] = ranges[j];
+            for (let i = start; i < end; i++) sum += dataArray[i];
+            bands[j] = (sum / (end - start)) / 255;
+            
+            smoothBands[j] += (bands[j] - smoothBands[j]) * 0.15;
+        }
 
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -198,43 +198,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const cx = w / 2;
         const cy = h / 2;
 
-        // Dark Layer (Bass driven) - Slow, heavy heartbeat expansion
-        const darkScale = 1 + (smoothBass * 0.04);
-        const darkY = smoothBass * 10;
-        
-        ctx.save();
-        ctx.translate(cx, cy + darkY);
-        ctx.scale(darkScale, darkScale);
-        ctx.drawImage(layerDarkCanvas, -cx, -cy, w, h);
-        ctx.restore();
+        let px = (mousePos.x - 0.5) * 30;
+        let py = (mousePos.y - 0.5) * 30;
+        const time = Date.now() * 0.001;
 
-        // Light Layer (Treble driven) - Quick, sharp float/flutter upwards
-        const lightScale = 1 + (smoothTreble * 0.05);
-        const lightY = -smoothTreble * 15;
-        
-        ctx.save();
-        // Add subtle mouse parallax for depth
-        let parallaxX = 0, parallaxY = 0;
-        if (mousePos.x !== -1) {
-            parallaxX = (mousePos.x - 0.5) * 15;
-            parallaxY = (mousePos.y - 0.5) * 15;
-        }
-        
-        ctx.translate(cx + parallaxX, cy + lightY + parallaxY);
-        ctx.scale(lightScale, lightScale);
-        
-        // Dynamic glow on high energy
-        if (smoothTreble > 0.3) {
-            ctx.shadowColor = 'rgba(255,255,255,0.4)';
-            ctx.shadowBlur = smoothTreble * 20;
-        }
-        
-        ctx.drawImage(layerLightCanvas, -cx, -cy, w, h);
-        ctx.restore();
+        // Draw layers from Darkest (0) to Lightest (4)
+        layers.forEach((layer, i) => {
+            ctx.save();
+            
+            const depth = i / (NUM_LAYERS - 1); // 0.0 to 1.0 (Dark to Light)
+            const energy = smoothBands[i];
+            
+            // Parallax shift based on depth
+            const shiftX = px * (0.2 + depth * 0.8);
+            const shiftY = py * (0.2 + depth * 0.8);
+            
+            // Scaling and Y movement based on energy
+            let scale = 1.0 + (energy * 0.08) + (depth * 0.02 * energy);
+            let moveY = shiftY - (energy * depth * 25); 
+            
+            // Subtle rotation alternating per layer
+            let rotDir = i % 2 === 0 ? 1 : -1;
+            let rot = Math.sin(time + i) * rotDir * (energy * 0.04);
+            
+            ctx.translate(cx + shiftX, cy + moveY);
+            ctx.scale(scale, scale);
+            ctx.rotate(rot);
+            
+            // Glow effect for highlights on peaks
+            if (i >= NUM_LAYERS - 2 && energy > 0.4) {
+                ctx.shadowColor = 'rgba(255,255,255,0.6)';
+                ctx.shadowBlur = energy * 30;
+            }
+            
+            ctx.drawImage(layer.canvas, -cx, -cy, w, h);
+            ctx.restore();
+        });
 
-        // Global composite flash for heavy drops
-        if (smoothBass > 0.6) {
-            ctx.globalAlpha = (smoothBass - 0.6) * 0.6;
+        // Global composite flash for very heavy bass drops
+        if (smoothBands[0] > 0.7) {
+            ctx.globalAlpha = Math.min((smoothBands[0] - 0.7) * 0.8, 1.0);
             ctx.globalCompositeOperation = 'lighter';
             ctx.drawImage(canvas, -2, -2, w+4, h+4);
             ctx.globalCompositeOperation = 'source-over';
