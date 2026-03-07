@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mono-Orchestra | Particle Symphony</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@200;300;400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- 3D Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay -->
+    <div class="ui-layer">
+        <!-- Title Area -->
+        <div class="header">
+            <h1 class="title">THE MONO-ORCHESTRA</h1>
+            <p class="subtitle">PARTICLE SYMPHONY</p>
+        </div>
+
+        <!-- Playlist Panel -->
+        <div class="playlist-panel">
+            <h2 class="playlist-title">CURATED TRACKLIST</h2>
+            <ul class="tracklist" id="tracklist">
+                <li class="track-item"
+                    data-src="musicfolder/Beethoven_-_Piano_Sonata_No.14_In_C_Sharp_Minor_Op.27-2_I._Adagio_Sostenuto_Extract_(mp3.pm).mp3">
+                    01. Beethoven - Moonlight Sonata, 1st Mvt.</li>
+                <li class="track-item" data-src="musicfolder/Chopin-nocturne-op-9-no-1.mp3">02. Chopin - Nocturne No. 1
+                    (Op. 9 No. 1)</li>
+                <li class="track-item" data-src="musicfolder/chopin-nocturne-in-e-flat-major-op-9-no-2-162789.mp3">03.
+                    Chopin - Nocturne No. 2 (Op. 9 No. 2)</li>
+                <li class="track-item" data-src="musicfolder/chopin-nocturne-20-in-c-sharp-minor-162788.mp3">04. Chopin
+                    - Nocturne No. 20</li>
+                <li class="track-item"
+                    data-src="musicfolder/Daniela_Ruso_-_Beethoven_Piano_Sonata_No._8_in_C_Minor_Op._13_Pathetique_II._Adagio_cantabile_-_(mp3.pm).mp3">
+                    05. Beethoven - Pathétique Sonata, 2nd Mvt.</li>
+                <li class="track-item"
+                    data-src="musicfolder/Ludwig_van_Beethoven_-_Sonata_No._8_in_C_Minor_Op._13_Pathetique_III._Rondo_-_Allegro_(mp3.pm).mp3">
+                    06. Beethoven - Pathétique Sonata, 3rd Mvt.</li>
+                <li class="track-item"
+                    data-src="musicfolder/Joannes_Chrysostomus_Wolfgang_Theophilus_Mozart_-_Piano_Concerto_No._21_in_C_Elvira_Madigan_K467_-_(mp3.pm).mp3">
+                    07. Mozart - Piano Concerto No. 21, 2nd Mvt.</li>
+                <li class="track-item"
+                    data-src="musicfolder/W.A.Mozart_-_Piano_Concerto_No._23_In_A_Major_K488_II_Adagio_(mp3.pm).mp3">08.
+                    Mozart - Piano Concerto No. 23, 2nd Mvt.</li>
+                <li class="track-item"
+                    data-src="musicfolder/Bach - Air on the G String - BWV 1068 - Arranged for Woodwinds and Strings.mp3">
+                    09. Bach - Air on the G String</li>
+                <li class="track-item" data-src="musicfolder/Erik Satie - Gymnopédie No.1.mp3">10. Satie - Gymnopédie
+                    No. 1</li>
+                <li class="track-item"
+                    data-src="musicfolder/Schubert Piano Quintet in A major, Op. 114 The Trout - IV. Theme and Variations.mp3">
+                    11. Schubert - The Trout, 4th Mvt.</li>
+                <li class="track-item" data-src="musicfolder/Robert Schumann, Kinderszenen, Op.15-7  Träumerei.mp3">12.
+                    Schumann - Träumerei</li>
+                <li class="track-item" data-src="musicfolder/Edvard-grieg-morning-mood.mp3">13. Grieg - Morning Mood
+                </li>
+                <li class="track-item" data-src="musicfolder/Franz_Liszt_-_Hungarian_Rhapsody_No.2_(mp3.pm).mp3">14.
+                    Liszt - Hungarian Rhapsody No. 2</li>
+                <li class="track-item"
+                    data-src="musicfolder/Frederick_Chopin_-_Prelude_in_E_Minor_Op._28_No._4_(mp3.pm).mp3">15. Chopin -
+                    Prelude No. 4</li>
+            </ul>
+        </div>
+
+        <!-- Now Playing & Controls -->
+        <div class="footer">
+            <div class="now-playing">
+                <span class="playing-indicator"></span>
+                <span id="current-track-name">SELECT A TRACK TO BEGIN</span>
+            </div>
+            <div class="controls">
+                <button id="btn-play-pause" class="control-btn" disabled>PLAY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="main-audio" crossorigin="anonymous"></audio>
+
+    <!-- Import maps polyfill -->
+    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+
+    <!-- Three.js CDN Setup -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "lil-gui": "https://unpkg.com/lil-gui@0.19.1/dist/lil-gui.esm.min.js"
+            }
+        }
+    </script>
+
+    <!-- Main Logic -->
+    <script type="module" src="./app.js?v=2"></script>
+    <script src="./audio.js?v=2"></script>
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V-SIDE®</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;700;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="header">
+    <h1 class="logo">V-SIDE®</h1>
+    <div class="intro">
+      <p class="description">
+        "V-SIDE" visualizes the sonic landscape. Much like a vinyl record's A-side and B-side, the V-Side represents the
+        "Visual Side" of music—translating the top Billboard tracks into striking typography and design.
+      </p>
+      <p class="credits">
+        designed by <strong>DJ</strong> and arranged by <strong>Antigravity</strong>
+      </p>
+    </div>
+  </header>
+
+  <main class="grid-container" id="posterGrid">
+    <!-- Posters will be injected here by JS -->
+  </main>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <a href="#" class="go-top">↑ Go to top</a>
+    </div>
+    <div class="footer-col">
+      <p>V-SIDE® will be continuously updated as an on-going project and this website will be shared as a platform.</p>
+      <p class="mt-4">Release Date:<br>
+        Pt. 1: Mar 5 2026<br>
+      </p>
+      <p class="mt-4">Website Launch:<br>
+        Thursday March 5 2026
+      </p>
+    </div>
+    <div class="footer-col">
+      <p>The original source of music videos on the website is from <i>Youtube</i>, and the copyright of each video is
+        owned by the owner of the video.</p>
+      <p class="mt-4">Fonts in use<br>
+        <i>Helvetica Neue</i> (ENG)<br>
+        <i>Inter</i> (ENG)
+      </p>
+      <p class="mt-4">© 2026 V-SIDE® All rights reserved.</p>
+      <p class="mt-4 footer-credits">designed by <strong>DJ</strong> and arranged by <strong>Antigravity</strong></p>
+    </div>
+  </footer>
+
+  <!-- Detailed Modal (Listening Room) -->
+  <dialog id="playerModal" class="player-modal">
+    <div class="modal-content">
+      <button id="closeModal" class="close-btn" aria-label="Close">×</button>
+      <div class="modal-left">
+        <img id="modalPoster" src="" alt="Poster">
+        <div class="poster-overlay">
+          <span id="modalRank" class="modal-rank"></span>
+        </div>
+      </div>
+      <div class="modal-right">
+        <div class="track-info">
+          <h2 id="modalTitle" class="modal-title"></h2>
+          <p id="modalArtist" class="modal-artist"></p>
+        </div>
+
+        <div class="track-details">
+          <div class="detail-block">
+            <span class="detail-label">Lyrics Key Visual</span>
+            <p id="modalLyrics" class="modal-lyrics"></p>
+          </div>
+        </div>
+
+        <div class="player-container">
+          <span class="detail-label">Listening Room</span>
+          <div class="iframe-wrapper">
+            <iframe id="youtubeIframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=4"></script>
+</body>
+
+</html>
