@@ -115,28 +115,32 @@ class AudioVisualizer {
         this.analyser.getByteFrequencyData(this.dataArray);
 
         let bassSum = 0;
-        // Focus on sub-bass and bass (0-60Hz approx) for kicks
-        for (let i = 0; i < 6; i++) {
+        // CLASSICAL TUNING: Expand "bass" to cover up to ~800Hz (Cellos, lower strings, piano left hand)
+        // 40 bins * ~21Hz = ~840Hz.
+        const bassBins = 40;
+        for (let i = 0; i < bassBins; i++) {
             bassSum += this.dataArray[i];
         }
         
-        // Focus on high hats / treble (approx 5kHz+)
+        // Focus on violins, flutes, piano right hand (approx 2kHz - 10kHz)
         let trebleSum = 0;
-        for (let i = 40; i < 100; i++) {
+        const trebleStart = 100;
+        const trebleEnd = 200;
+        for (let i = trebleStart; i < trebleEnd; i++) {
             trebleSum += this.dataArray[i];
         }
 
-        // NON-LINEAR SCALING (DYNAMIC CONTRAST)
-        // Squaring the values forces quiet sounds to stay very low (e.g. 0.3^2 = 0.09)
-        // and loud sounds to remain high (e.g. 0.9^2 = 0.81).
-        // This makes the visualizer sharply distinguish between silence/ambience and actual beats.
+        // NON-LINEAR SCALING (CLASSICAL CONTRAST)
+        // Classical music is dynamic but rarely has hard kicks.
+        // We tame the Math.pow exponent from 2.5 down to 1.5.
+        // This makes it respond to swells and crescendos gracefully without needing a sharp hit.
         
-        let rawBass = (bassSum / (6 * 255));
-        let rawTreble = (trebleSum / (60 * 255));
+        let rawBass = (bassSum / (bassBins * 255));
+        let rawTreble = (trebleSum / ((trebleEnd - trebleStart) * 255));
 
-        // Apply a slight threshold gate to cut out pure static
-        let bass = rawBass < 0.1 ? 0 : Math.pow(rawBass, 2.5) * 1.5;
-        let treble = rawTreble < 0.1 ? 0 : Math.pow(rawTreble, 2.0) * 1.5;
+        // Lower the threshold to pick up quiet string intro parts
+        let bass = rawBass < 0.05 ? 0 : Math.pow(rawBass, 1.5) * 1.8;
+        let treble = rawTreble < 0.05 ? 0 : Math.pow(rawTreble, 1.5) * 1.8;
         let overall = (bass + treble) / 2;
 
         // Cap at 1.0
