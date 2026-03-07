@@ -136,14 +136,16 @@ class MonoOrchestra {
                     float nx = snoise(noisePos + vec3(flow, 0.0, 0.0));
                     float ny = snoise(noisePos + vec3(0.0, flow, 0.0));
                     float nz = snoise(noisePos + vec3(0.0, 0.0, flow));
-                    // CALM AMBIENT REACTIVITY: Drastically reduced values (approx 10-15% of extreme)
-                    vec3 fluidOffset = vec3(nx, ny, nz) * (1.5 + uTreble * 1.5 + uBass * 1.0);
+                    // DYNAMIC CONTRAST: Tie base brightness and base offset to overall volume
+                    vec3 fluidOffset = vec3(nx, ny, nz) * (uBass * 2.0 + uTreble * 3.0);
                     vec3 finalPos = iPos + fluidOffset;
                     
-                    vAlpha = 1.0 - (abs(finalPos.z) / 40.0);
+                    // Dim particles when quiet, brighten when loud
+                    float baseAlpha = 0.2 + (uBass + uTreble) * 0.8;
+                    vAlpha = (1.0 - (abs(finalPos.z) / 40.0)) * baseAlpha;
 
-                    // Dynamic Pumping: Barely noticeable, gentle pulse instead of massive explosion
-                    float dynamicScale = aScale * (1.0 + uBass * 0.4 + uTreble * 0.1);
+                    // Dynamic Pumping: Only scale when there's actually a beat
+                    float dynamicScale = aScale * (1.0 + uBass * 1.5);
 
                     vec4 mvPosition = viewMatrix * vec4(finalPos, 1.0);
                     mvPosition.xyz += position * dynamicScale; 
@@ -236,8 +238,9 @@ class MonoOrchestra {
         requestAnimationFrame(this.animate);
         const deltaTime = this.clock.getDelta();
         
-        // CALM AMBIENT REACTIVITY: Gentle speed up on bass
-        this.flowTime += deltaTime * (0.1 + this.audioData.bass * 0.4);
+        // DYNAMIC CONTRAST: Almost zero base speed, only moves when audio plays
+        const overallVol = (this.audioData.bass + this.audioData.treble) / 2;
+        this.flowTime += deltaTime * (0.01 + overallVol * 0.8);
 
         this.currentMouse3D.lerp(this.targetMouse3D, 0.1);
 

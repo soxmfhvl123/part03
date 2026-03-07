@@ -109,41 +109,60 @@ class AudioVisualizer {
         }
     }
 
+    getAudioData() {
+        if (!this.analyser || !this.isPlaying) return { bass: 0, treble: 0, overall: 0 };
+
+        this.analyser.getByteFrequencyData(this.dataArray);
+
+        let bassSum = 0;
+        // Focus on sub-bass and bass (0-60Hz approx) for kicks
+        for (let i = 0; i < 6; i++) {
+            bassSum += this.dataArray[i];
+        }
+        
+        // Focus on high hats / treble (approx 5kHz+)
+        let trebleSum = 0;
+        for (let i = 40; i < 100; i++) {
+            trebleSum += this.dataArray[i];
+        }
+
+        // NON-LINEAR SCALING (DYNAMIC CONTRAST)
+        // Squaring the values forces quiet sounds to stay very low (e.g. 0.3^2 = 0.09)
+        // and loud sounds to remain high (e.g. 0.9^2 = 0.81).
+        // This makes the visualizer sharply distinguish between silence/ambience and actual beats.
+        
+        let rawBass = (bassSum / (6 * 255));
+        let rawTreble = (trebleSum / (60 * 255));
+
+        // Apply a slight threshold gate to cut out pure static
+        let bass = rawBass < 0.1 ? 0 : Math.pow(rawBass, 2.5) * 1.5;
+        let treble = rawTreble < 0.1 ? 0 : Math.pow(rawTreble, 2.0) * 1.5;
+        let overall = (bass + treble) / 2;
+
+        // Cap at 1.0
+        bass = Math.min(bass, 1.0);
+        treble = Math.min(treble, 1.0);
+        overall = Math.min(overall, 1.0);
+
+        return { bass, treble, overall };
+    }
+
     updateData() {
         requestAnimationFrame(this.updateData.bind(this));
 
-        if (this.analyser && this.isPlaying) {
-            this.analyser.getByteFrequencyData(this.dataArray);
+        if (window.monoApp) {
+            if (this.analyser && this.isPlaying) {
+                const { bass, treble } = this.getAudioData();
 
-            // Calculate Bass (lower frequencies)
-            let bassSum = 0;
-            const bassCount = 10; // First 10 bins
-            for (let i = 0; i < bassCount; i++) {
-                bassSum += this.dataArray[i];
-            }
-            const targetBass = (bassSum / bassCount) / 255.0; // Normalize 0-1
-
-            // Calculate Treble (higher frequencies)
-            let trebleSum = 0;
-            const trebleStart = 100;
-            const trebleCount = 50;
-            for (let i = trebleStart; i < trebleStart + trebleCount; i++) {
-                trebleSum += this.dataArray[i];
-            }
-            const targetTreble = (trebleSum / trebleCount) / 255.0;
-
-            // Send normalized data to our global app instance using LERP for smooth buttery transitions!
-            if (window.monoApp) {
+                // Send normalized data to our global app instance using LERP for smooth buttery transitions!
                 // Ultra smooth morph (0.015 instead of 0.05)
-                window.monoApp.audioData.bass += (targetBass - window.monoApp.audioData.bass) * 0.015;
+                window.monoApp.audioData.bass += (bass - window.monoApp.audioData.bass) * 0.015;
                 // Ultra slow easing for treble (0.01 instead of 0.03)
-                window.monoApp.audioData.treble += (targetTreble - window.monoApp.audioData.treble) * 0.01;
-            }
-        } else {
-            // Decay very smoothly
-            if (window.monoApp) {
-                window.monoApp.audioData.bass *= 0.98;
-                window.monoApp.audioData.treble *= 0.98;
+                window.monoApp.audioData.treble += (treble - window.monoApp.audioData.treble) * 0.01;
+            } else {
+                // If paused, slowly fade out the values
+                window.monoApp.audioData.bass += (0 - window.monoApp.audioData.bass) * 0.01;
+                window.monoApp.audioData.treble += (0 - window.monoApp.audioData.treble) * 0.01;
             }
         }
     }
