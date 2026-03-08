@@ -103,21 +103,23 @@ class AudioVisualizer {
                 // Set new track
                 e.target.classList.add('active');
                 const src = e.target.getAttribute('data-src');
-                this.currentTrackNameEl.innerText = e.target.innerText;
+                
+                // Fetch the track name depending on active language
+                this.currentTrackName.textContent = e.target.getAttribute(`data-title-${this.currentLang}`);
 
-                this.audioEl.src = src;
-                this.audioEl.play().then(() => {
+                this.audio.src = src;
+                this.audio.play().then(() => {
                     this.isPlaying = true;
                     this.playPauseBtn.disabled = false;
                     this.playPauseBtn.innerText = "PAUSE";
-                    this.indicator.classList.add('active');
+                    this.playingIndicator.classList.add('active');
 
                     // Animation now stays continuous as requested
                 }).catch(err => {
                     console.log("Audio play error (usually means missing mp3 file):", err);
-                    this.currentTrackNameEl.innerText = "[FILE NOT FOUND] Place MP3 in /audio/";
+                    this.currentTrackName.innerText = "[FILE NOT FOUND] Place MP3 in /audio/";
                     this.isPlaying = false;
-                    this.indicator.classList.remove('active');
+                    this.playingIndicator.classList.remove('active');
                     this.playPauseBtn.innerText = "PLAY";
                 });
             });
@@ -126,20 +128,20 @@ class AudioVisualizer {
         // Play/Pause Button
         this.playPauseBtn.addEventListener('click', () => {
             if (this.isPlaying) {
-                this.audioEl.pause();
+                this.audio.pause();
                 this.isPlaying = false;
                 this.playPauseBtn.innerText = "PLAY";
-                this.indicator.classList.remove('active');
+                this.playingIndicator.classList.remove('active');
             } else {
-                this.audioEl.play();
+                this.audio.play();
                 this.isPlaying = true;
                 this.playPauseBtn.innerText = "PAUSE";
-                this.indicator.classList.add('active');
+                this.playingIndicator.classList.add('active');
             }
         });
 
         // Auto-Play Next Track when current track ends
-        this.audioEl.addEventListener('ended', () => {
+        this.audio.addEventListener('ended', () => {
             this.playNextTrack();
         });
 
