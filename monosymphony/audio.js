@@ -1,18 +1,74 @@
 class AudioVisualizer {
     constructor() {
-        this.audioEl = document.getElementById('main-audio');
+        this.audio = document.getElementById('main-audio');
         this.trackItems = document.querySelectorAll('.track-item');
-        this.currentTrackNameEl = document.getElementById('current-track-name');
         this.playPauseBtn = document.getElementById('btn-play-pause');
-        this.indicator = document.querySelector('.playing-indicator');
+        this.currentTrackName = document.getElementById('current-track-name');
+        this.playingIndicator = document.querySelector('.playing-indicator');
+        this.playlistTitle = document.getElementById('playlist-title-text');
+        
+        // Language State
+        this.currentLang = 'kr';
+        this.langBtns = {
+            'kr': document.getElementById('lang-kr'),
+            'en': document.getElementById('lang-en')
+        };
 
         this.audioContext = null;
         this.analyser = null;
+        this.source = null;
         this.dataArray = null;
 
         this.isPlaying = false;
-
+        
+        this.initLangToggle();
         this.initEvents();
+        this.updateLangUI(); // Apply default language
+    }
+    
+    initLangToggle() {
+        if (!this.langBtns.kr || !this.langBtns.en) return;
+        
+        this.langBtns.kr.addEventListener('click', () => this.switchLang('kr'));
+        this.langBtns.en.addEventListener('click', () => this.switchLang('en'));
+    }
+    
+    switchLang(lang) {
+        if (this.currentLang === lang) return;
+        
+        // Update active class
+        this.langBtns[this.currentLang].classList.remove('active');
+        this.langBtns[lang].classList.add('active');
+        
+        this.currentLang = lang;
+        this.updateLangUI();
+    }
+    
+    updateLangUI() {
+        // Update playlist title
+        if (this.playlistTitle) {
+            this.playlistTitle.textContent = this.currentLang === 'kr' ? '추천 플레이리스트' : 'CURATED TRACKLIST';
+        }
+
+        // Update all track items in the list
+        this.trackItems.forEach(item => {
+            const title = item.getAttribute(`data-title-${this.currentLang}`);
+            if (title) {
+                item.textContent = title;
+            }
+        });
+        
+        // Update Now Playing text
+        if (this.currentTrackName) {
+            // Is a track currently playing?
+            const activeTrack = document.querySelector('.track-item.active');
+            if (activeTrack) {
+                this.currentTrackName.textContent = activeTrack.getAttribute(`data-title-${this.currentLang}`);
+            } else {
+                // Not playing, use default text
+                this.currentTrackName.textContent = this.currentTrackName.getAttribute(`data-default-${this.currentLang}`);
+            }
+        }
     }
 
     initAudioContext() {
@@ -22,7 +78,7 @@ class AudioVisualizer {
             this.analyser.fftSize = 2048; // High resolution
             this.analyser.smoothingTimeConstant = 0.8;
 
-            const source = this.audioContext.createMediaElementSource(this.audioEl);
+            const source = this.audioContext.createMediaElementSource(this.audio);
             source.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
 

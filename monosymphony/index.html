@@ -19,54 +19,113 @@
 
     <!-- UI Overlay -->
     <div class="ui-layer">
-        <!-- Title Area -->
+        <!-- UI Container overlay -->
         <div class="header">
-            <h1 class="title">THE MONO-ORCHESTRA</h1>
-            <p class="subtitle">PARTICLE SYMPHONY</p>
+            <div class="header-top">
+                <div class="titles">
+                    <h1 class="title">MONOSYMPHONY</h1>
+                    <div class="subtitle">PARTICLE REACTIVITY</div>
+                </div>
+                <!-- Language Toggle -->
+                <div class="lang-toggle">
+                    <span id="lang-kr" class="lang-btn active">KR</span> / <span id="lang-en" class="lang-btn">EN</span>
+                </div>
+            </div>
         </div>
 
         <!-- Playlist Panel -->
         <div class="playlist-panel">
-            <h2 class="playlist-title">CURATED TRACKLIST</h2>
+            <h2 class="playlist-title" id="playlist-title-text">CURATED TRACKLIST</h2>
             <ul class="tracklist" id="tracklist">
                 <li class="track-item"
+                    data-title-en="01. Beethoven - Moonlight Sonata, 1st Mvt."
+                    data-title-kr="01. 베토벤 - 피아노 소나타 14번 '월광' 1악장"
                     data-src="musicfolder/Beethoven_-_Piano_Sonata_No.14_In_C_Sharp_Minor_Op.27-2_I._Adagio_Sostenuto_Extract_(mp3.pm).mp3">
-                    01. Beethoven - Moonlight Sonata, 1st Mvt.</li>
-                <li class="track-item" data-src="musicfolder/Chopin-nocturne-op-9-no-1.mp3">02. Chopin - Nocturne No. 1
-                    (Op. 9 No. 1)</li>
-                <li class="track-item" data-src="musicfolder/chopin-nocturne-in-e-flat-major-op-9-no-2-162789.mp3">03.
-                    Chopin - Nocturne No. 2 (Op. 9 No. 2)</li>
-                <li class="track-item" data-src="musicfolder/chopin-nocturne-20-in-c-sharp-minor-162788.mp3">04. Chopin
-                    - Nocturne No. 20</li>
-                <li class="track-item"
-                    data-src="musicfolder/Daniela_Ruso_-_Beethoven_Piano_Sonata_No._8_in_C_Minor_Op._13_Pathetique_II._Adagio_cantabile_-_(mp3.pm).mp3">
-                    05. Beethoven - Pathétique Sonata, 2nd Mvt.</li>
-                <li class="track-item"
-                    data-src="musicfolder/Ludwig_van_Beethoven_-_Sonata_No._8_in_C_Minor_Op._13_Pathetique_III._Rondo_-_Allegro_(mp3.pm).mp3">
-                    06. Beethoven - Pathétique Sonata, 3rd Mvt.</li>
-                <li class="track-item"
-                    data-src="musicfolder/Joannes_Chrysostomus_Wolfgang_Theophilus_Mozart_-_Piano_Concerto_No._21_in_C_Elvira_Madigan_K467_-_(mp3.pm).mp3">
-                    07. Mozart - Piano Concerto No. 21, 2nd Mvt.</li>
-                <li class="track-item"
-                    data-src="musicfolder/W.A.Mozart_-_Piano_Concerto_No._23_In_A_Major_K488_II_Adagio_(mp3.pm).mp3">08.
-                    Mozart - Piano Concerto No. 23, 2nd Mvt.</li>
-                <li class="track-item"
-                    data-src="musicfolder/Bach - Air on the G String - BWV 1068 - Arranged for Woodwinds and Strings.mp3">
-                    09. Bach - Air on the G String</li>
-                <li class="track-item" data-src="musicfolder/Erik Satie - Gymnopédie No.1.mp3">10. Satie - Gymnopédie
-                    No. 1</li>
-                <li class="track-item"
-                    data-src="musicfolder/Schubert Piano Quintet in A major, Op. 114 The Trout - IV. Theme and Variations.mp3">
-                    11. Schubert - The Trout, 4th Mvt.</li>
-                <li class="track-item" data-src="musicfolder/Robert Schumann, Kinderszenen, Op.15-7  Träumerei.mp3">12.
-                    Schumann - Träumerei</li>
-                <li class="track-item" data-src="musicfolder/Edvard-grieg-morning-mood.mp3">13. Grieg - Morning Mood
                 </li>
-                <li class="track-item" data-src="musicfolder/Franz_Liszt_-_Hungarian_Rhapsody_No.2_(mp3.pm).mp3">14.
-                    Liszt - Hungarian Rhapsody No. 2</li>
+                
+                <li class="track-item" 
+                    data-title-en="02. Chopin - Nocturne No. 1 (Op. 9 No. 1)"
+                    data-title-kr="02. 쇼팽 - 녹턴 1번 내림나단조 Op. 9-1"
+                    data-src="musicfolder/Chopin-nocturne-op-9-no-1.mp3">
+                    02. 쇼팽 - 녹턴 1번 내림나단조 Op. 9-1</li>
+                
+                <li class="track-item" 
+                    data-title-en="03. Chopin - Nocturne No. 2 (Op. 9 No. 2)"
+                    data-title-kr="03. 쇼팽 - 녹턴 2번 내림마장조 Op. 9-2"
+                    data-src="musicfolder/chopin-nocturne-in-e-flat-major-op-9-no-2-162789.mp3">
+                    03. 쇼팽 - 녹턴 2번 내림마장조 Op. 9-2</li>
+                
+                <li class="track-item" 
+                    data-title-en="04. Chopin - Nocturne No. 20"
+                    data-title-kr="04. 쇼팽 - 녹턴 20번 올림다단조"
+                    data-src="musicfolder/chopin-nocturne-20-in-c-sharp-minor-162788.mp3">
+                    04. 쇼팽 - 녹턴 20번 올림다단조</li>
+                
                 <li class="track-item"
-                    data-src="musicfolder/Frederick_Chopin_-_Prelude_in_E_Minor_Op._28_No._4_(mp3.pm).mp3">15. Chopin -
-                    Prelude No. 4</li>
+                    data-title-en="05. Beethoven - Pathétique Sonata, 2nd Mvt."
+                    data-title-kr="05. 베토벤 - 피아노 소나타 8번 '비창' 2악장"
+                    data-src="musicfolder/Daniela_Ruso_-_Beethoven_Piano_Sonata_No._8_in_C_Minor_Op._13_Pathetique_II._Adagio_cantabile_-_(mp3.pm).mp3">
+                    05. 베토벤 - 피아노 소나타 8번 '비창' 2악장</li>
+                
+                <li class="track-item"
+                    data-title-en="06. Beethoven - Pathétique Sonata, 3rd Mvt."
+                    data-title-kr="06. 베토벤 - 피아노 소나타 8번 '비창' 3악장"
+                    data-src="musicfolder/Ludwig_van_Beethoven_-_Sonata_No._8_in_C_Minor_Op._13_Pathetique_III._Rondo_-_Allegro_(mp3.pm).mp3">
+                    06. 베토벤 - 피아노 소나타 8번 '비창' 3악장</li>
+                
+                <li class="track-item"
+                    data-title-en="07. Mozart - Piano Concerto No. 21, 2nd Mvt."
+                    data-title-kr="07. 모차르트 - 피아노 협주곡 21번 다장조 2악장"
+                    data-src="musicfolder/Joannes_Chrysostomus_Wolfgang_Theophilus_Mozart_-_Piano_Concerto_No._21_in_C_Elvira_Madigan_K467_-_(mp3.pm).mp3">
+                    07. 모차르트 - 피아노 협주곡 21번 다장조 2악장</li>
+                
+                <li class="track-item"
+                    data-title-en="08. Mozart - Piano Concerto No. 23, 2nd Mvt."
+                    data-title-kr="08. 모차르트 - 피아노 협주곡 23번 가장조 2악장"
+                    data-src="musicfolder/W.A.Mozart_-_Piano_Concerto_No._23_In_A_Major_K488_II_Adagio_(mp3.pm).mp3">
+                    08. 모차르트 - 피아노 협주곡 23번 가장조 2악장</li>
+                
+                <li class="track-item"
+                    data-title-en="09. Bach - Air on the G String"
+                    data-title-kr="09. 바흐 - G선상의 아리아"
+                    data-src="musicfolder/Bach - Air on the G String - BWV 1068 - Arranged for Woodwinds and Strings.mp3">
+                    09. 바흐 - G선상의 아리아</li>
+                
+                <li class="track-item" 
+                    data-title-en="10. Satie - Gymnopédie No. 1"
+                    data-title-kr="10. 에릭 사티 - 짐노페디 1번"
+                    data-src="musicfolder/Erik Satie - Gymnopédie No.1.mp3">
+                    10. 에릭 사티 - 짐노페디 1번</li>
+                
+                <li class="track-item"
+                    data-title-en="11. Schubert - The Trout, 4th Mvt."
+                    data-title-kr="11. 슈베르트 - 피아노 5중주 '송어' 4악장"
+                    data-src="musicfolder/Schubert Piano Quintet in A major, Op. 114 The Trout - IV. Theme and Variations.mp3">
+                    11. 슈베르트 - 피아노 5중주 '송어' 4악장</li>
+                
+                <li class="track-item" 
+                    data-title-en="12. Schumann - Träumerei"
+                    data-title-kr="12. 슈만 - 어린이의 정경 '트로이메라이'"
+                    data-src="musicfolder/Robert Schumann, Kinderszenen, Op.15-7  Träumerei.mp3">
+                    12. 슈만 - 어린이의 정경 '트로이메라이'</li>
+                
+                <li class="track-item" 
+                    data-title-en="13. Grieg - Morning Mood"
+                    data-title-kr="13. 그리그 - 페르 귄트 모음곡 '아침의 기분'"
+                    data-src="musicfolder/Edvard-grieg-morning-mood.mp3">
+                    13. 그리그 - 페르 귄트 모음곡 '아침의 기분'</li>
+                
+                <li class="track-item" 
+                    data-title-en="14. Liszt - Hungarian Rhapsody No. 2"
+                    data-title-kr="14. 리스트 - 헝가리안 랩소디 2번"
+                    data-src="musicfolder/Franz_Liszt_-_Hungarian_Rhapsody_No.2_(mp3.pm).mp3">
+                    14. 리스트 - 헝가리안 랩소디 2번</li>
+                
+                <li class="track-item"
+                    data-title-en="15. Chopin - Prelude No. 4"
+                    data-title-kr="15. 쇼팽 - 전주곡 4번 마단조 Op. 28-4"
+                    data-src="musicfolder/Frederick_Chopin_-_Prelude_in_E_Minor_Op._28_No._4_(mp3.pm).mp3">
+                    15. 쇼팽 - 전주곡 4번 마단조 Op. 28-4</li>
             </ul>
         </div>
 
@@ -74,7 +133,7 @@
         <div class="footer">
             <div class="now-playing">
                 <span class="playing-indicator"></span>
-                <span id="current-track-name">SELECT A TRACK TO BEGIN</span>
+                <span id="current-track-name" data-default-en="SELECT A TRACK TO BEGIN" data-default-kr="듣고 싶은 곡을 선택하세요">듣고 싶은 곡을 선택하세요</span>
             </div>
             <div class="controls">
                 <button id="btn-play-pause" class="control-btn" disabled>PLAY</button>
@@ -100,8 +159,8 @@
     </script>
 
     <!-- Main Logic -->
-    <script type="module" src="./app.js?v=8"></script>
-    <script src="./audio.js?v=8"></script>
+    <script type="module" src="./app.js?v=9"></script>
+    <script src="./audio.js?v=9"></script>
 </body>
 
 </html>
